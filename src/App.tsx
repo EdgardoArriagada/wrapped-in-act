@@ -1,25 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react'
+
+const sleep = async (t: number) => new Promise((resolve, reject) => setTimeout(resolve, t))
+
+const UsernameForm = () => {
+  const [formStatus, setFormStatus] = useState<'default' | 'pending' | 'submitted'>()
+
+  const handleSubmit = async (e: any) => {
+    setFormStatus('pending')
+
+    e.preventDefault()
+
+    await sleep(2000)
+
+    setFormStatus('submitted')
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="username">Username</label>
+        <input id="username" />
+      </div>
+      <button type="submit">Submit</button>
+      <span>{formStatus === 'pending' ? 'Saving...' : null}</span>
+      <span>{formStatus === 'submitted' ? 'Submitted!' : null}</span>
+    </form>
+  )
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>Welome</h1>
+      <UsernameForm />
+    </>
   );
 }
 
