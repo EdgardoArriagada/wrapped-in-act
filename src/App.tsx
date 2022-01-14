@@ -1,30 +1,40 @@
-import { useState } from 'react'
+import axios, { AxiosResponse } from 'axios'
+import { useEffect, useState } from 'react'
 
-const sleep = async (t: number) => new Promise((resolve, reject) => setTimeout(resolve, t))
+interface User {
+  userId: number
+  id: number
+  title: string
+  body: string
+}
+
+const filterUsers = (response: AxiosResponse<User[], any>) =>
+  response.data.filter((post) => post.title === 'post gone')
 
 const UsernameForm = () => {
-  const [formStatus, setFormStatus] = useState<'default' | 'pending' | 'submitted'>()
+  const [posts, setPosts] = useState<User[]>([])
 
-  const handleSubmit = async (e: any) => {
-    setFormStatus('pending')
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get<User[]>(
+        'https://jsonplaceholder.typicode.com/posts'
+      )
 
-    e.preventDefault()
+      const filteredData = setPosts(filterUsers(response))
+    }
 
-    await sleep(2000)
-
-    setFormStatus('submitted')
-  }
+    fetchData()
+  }, [])
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="username">Username</label>
-        <input id="username" />
-      </div>
-      <button type="submit">Submit</button>
-      <span>{formStatus === 'pending' ? 'Saving...' : null}</span>
-      <span>{formStatus === 'submitted' ? 'Submitted!' : null}</span>
-    </form>
+    <div>
+      <ul>
+        {posts.length === 0 && <li>Loading...</li>}
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
@@ -34,7 +44,7 @@ function App() {
       <h1>Welome</h1>
       <UsernameForm />
     </>
-  );
+  )
 }
 
-export default App;
+export default App
