@@ -8,8 +8,8 @@ interface User {
   body: string
 }
 
-const filterUsers = (response: AxiosResponse<User[], any>) =>
-  response.data.filter((post) => post.title === 'post gone')
+const filterBannedPosts = (response: AxiosResponse<User[], any>) =>
+  response.data.filter((post) => post.title !== 'banned post')
 
 const UsernameForm = () => {
   const [posts, setPosts] = useState<User[]>([])
@@ -20,7 +20,7 @@ const UsernameForm = () => {
         'https://jsonplaceholder.typicode.com/posts'
       )
 
-      const filteredData = setPosts(filterUsers(response))
+      setPosts(filterBannedPosts(response))
     }
 
     fetchData()
